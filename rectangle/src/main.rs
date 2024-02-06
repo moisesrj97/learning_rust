@@ -12,6 +12,12 @@ impl Rectangle {
         let is_higher = self.height >= other_rectangle.height;
         return is_higher && is_wider;
     }
+    fn square(side: i64) -> Self {
+        return Self {
+            width: side,
+            height: side,
+        };
+    }
 }
 
 fn main() {
@@ -23,9 +29,11 @@ fn main() {
         height: 10,
         width: 10,
     };
+    let square = Rectangle::square(10);
 
     println!("Area of big rectangle is {}", big_rectangle.area());
     println!("Area of small rectangle is {}", small_rectangle.area());
+    println!("Area of square is {}", square.area());
 
     print!(
         "Can big rectangle contain small rectangle? {}",
