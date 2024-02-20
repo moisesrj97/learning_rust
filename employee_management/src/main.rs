@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, io};
 
 struct Employee {
     name: String,
@@ -11,19 +11,17 @@ struct Company {
 
 impl Company {
     fn new() -> Company {
-        return Company {
+        Company {
             departments: HashMap::new(),
-        };
-    }
-    fn create_department(&mut self, department_name: String) {
-        if self.departments.get(&department_name).is_some() {
-            return;
-        };
-
-        self.departments.insert(department_name, Vec::new());
+        }
     }
 
     fn add_employee_to_department(&mut self, employee: Employee) {
+        if self.departments.get(&employee.department).is_none() {
+            self.departments
+                .insert(employee.department.clone(), Vec::new());
+        };
+
         let department = self
             .departments
             .get_mut(&employee.department)
@@ -60,7 +58,65 @@ impl Company {
 }
 
 fn main() {
-    println!("Hello, world!");
+    let mut company = Company::new();
+    let mut close = false;
+
+    println!("Hello, welcome to the employee management software!");
+    while !close {
+        println!("Please, select the action you want to perform");
+        println!("1. Add employee to department");
+        println!("2. Retrieve employees from a specific department");
+        println!("3. Retrieve all employees");
+        println!("4. Close");
+
+        let mut option = String::new();
+
+        io::stdin()
+            .read_line(&mut option)
+            .expect("Failed to read line!");
+
+        let numeric_option: i32 = option.trim().parse().unwrap_or(0);
+
+        match numeric_option {
+            1 => {
+                let mut name = String::new();
+                let mut department = String::new();
+                println!("Please introduce name:");
+                io::stdin()
+                    .read_line(&mut name)
+                    .expect("Failed to read line!");
+                println!("Please introduce department:");
+                io::stdin()
+                    .read_line(&mut department)
+                    .expect("Failed to read line!");
+
+                let new_employee = Employee { department, name };
+
+                company.add_employee_to_department(new_employee);
+
+                println!("Successfully added employee")
+            }
+            2 => {
+                let mut department = String::new();
+                println!("Please introduce department:");
+                io::stdin()
+                    .read_line(&mut department)
+                    .expect("Failed to read line!");
+                let employees = company.get_department_employees(department);
+                println!("List of employees:");
+                println!("{:?}", employees);
+            }
+            3 => {
+                let employees = company.get_all_employees();
+                println!("List of employees:");
+                println!("{:?}", employees);
+            }
+            4 => {
+                close = true;
+            }
+            _ => println!("That option does not exist, please try again"),
+        }
+    }
 }
 
 #[cfg(test)]
